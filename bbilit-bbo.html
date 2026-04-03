@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>삐릿-뽀 | 키이스케이프 홍대점</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-deep: #0c0a2a;
+      --bg-mid: #1a1040;
+      --lavender: #c4b5fd;
+      --rose: #f9a8d4;
+      --gold: #fde68a;
+      --mint: #67e8f9;
+      --mist: #e8e0ff;
+      --text: #ede9fe;
+      --text-dim: #a59ec0;
+      --glass: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-hover: rgba(255, 255, 255, 0.1);
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: linear-gradient(170deg, var(--bg-deep) 0%, var(--bg-mid) 40%, #150d35 100%);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ==================== STARFIELD CANVAS ==================== */
+    #starfield {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ==================== AURORA BLOBS ==================== */
+    .aurora-container {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .aurora {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.12;
+      animation: auroraFloat 20s ease-in-out infinite;
+    }
+
+    .aurora-1 {
+      width: 600px; height: 400px;
+      background: linear-gradient(135deg, var(--lavender), var(--rose));
+      top: -10%; left: -5%;
+      animation-delay: 0s;
+    }
+
+    .aurora-2 {
+      width: 500px; height: 350px;
+      background: linear-gradient(135deg, var(--mint), var(--lavender));
+      top: 40%; right: -10%;
+      animation-delay: -7s;
+    }
+
+    .aurora-3 {
+      width: 400px; height: 300px;
+      background: linear-gradient(135deg, var(--rose), var(--gold));
+      bottom: 10%; left: 20%;
+      animation-delay: -14s;
+    }
+
+    @keyframes auroraFloat {
+      0%, 100% {
+        transform: translate(0, 0) scale(1);
+        border-radius: 40% 60% 50% 50% / 50% 40% 60% 50%;
+      }
+      25% {
+        transform: translate(40px, -30px) scale(1.1);
+        border-radius: 60% 40% 60% 40% / 40% 60% 40% 60%;
+      }
+      50% {
+        transform: translate(-20px, 20px) scale(0.95);
+        border-radius: 50% 50% 40% 60% / 60% 50% 50% 40%;
+      }
+      75% {
+        transform: translate(20px, 40px) scale(1.05);
+        border-radius: 40% 60% 50% 50% / 50% 40% 60% 50%;
+      }
+    }
+
+    /* ==================== GLASS CARD ==================== */
+    .glass {
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      transition: background 0.3s, border-color 0.3s, transform 0.4s;
+    }
+
+    .glass:hover {
+      background: var(--glass-hover);
+      border-color: rgba(196, 181, 253, 0.15);
+    }
+
+    /* ==================== HERO ==================== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-badge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--lavender);
+      padding: 8px 22px;
+      border: 1px solid rgba(196, 181, 253, 0.25);
+      border-radius: 100px;
+      margin-bottom: 36px;
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.2s;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(4rem, 13vw, 11rem);
+      line-height: 0.9;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .hero-title .line {
+      display: block;
+      overflow: hidden;
+    }
+
+    .hero-title .line span {
+      display: inline-block;
+      transform: translateY(120%);
+      animation: slideUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .hero-title .line:nth-child(2) span {
+      animation-delay: 0.15s;
+    }
+
+    .hero-title .soft-pink {
+      color: var(--rose);
+      text-shadow: 0 0 60px rgba(249, 168, 212, 0.3), 0 0 120px rgba(249, 168, 212, 0.1);
+    }
+
+    .hero-title .soft-blue {
+      color: var(--mint);
+      text-shadow: 0 0 60px rgba(103, 232, 249, 0.3), 0 0 120px rgba(103, 232, 249, 0.1);
+    }
+
+    .hero-sub {
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      margin-bottom: 48px;
+      letter-spacing: 0.08em;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.5s;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.7s;
+    }
+
+    .hero-stat {
+      text-align: center;
+      padding: 18px 28px;
+      border-radius: 20px;
+      background: var(--glass);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--glass-border);
+      min-width: 100px;
+    }
+
+    .hero-stat .value {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: var(--lavender);
+    }
+
+    .hero-stat .label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px; left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 1s;
+    }
+
+    .hero-scroll span {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .scroll-line {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, var(--lavender), transparent);
+      animation: scrollPulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 1; transform: scaleY(1); }
+      50% { opacity: 0.3; transform: scaleY(0.4); }
+    }
+
+    /* ==================== SECTIONS ==================== */
+    .section {
+      padding: 120px 48px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 56px;
+    }
+
+    .section-header h2 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      white-space: nowrap;
+      color: var(--mist);
+    }
+
+    .section-header .line-accent {
+      flex: 1; height: 1px;
+      background: linear-gradient(to right, rgba(196, 181, 253, 0.3), transparent);
+    }
+
+    /* ==================== STORY ==================== */
+    .story-content {
+      max-width: 750px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .story-signal {
+      font-family: var(--font-mono);
+      font-size: 1.2rem;
+      color: var(--gold);
+      text-shadow: 0 0 30px rgba(253, 230, 138, 0.25);
+      margin-bottom: 36px;
+      letter-spacing: 0.05em;
+      animation: softPulse 4s ease-in-out infinite;
+    }
+
+    @keyframes softPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .story-text {
+      font-size: 1.1rem;
+      color: var(--text-dim);
+      line-height: 2.1;
+      margin-bottom: 40px;
+    }
+
+    .story-text em {
+      color: var(--mist);
+      font-style: normal;
+      font-weight: 500;
+    }
+
+    .story-box {
+      padding: 32px 36px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--lavender);
+      line-height: 1.9;
+      text-shadow: 0 0 15px rgba(196, 181, 253, 0.15);
+    }
+
+    /* ==================== INFO GRID ==================== */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+    }
+
+    .info-item {
+      padding: 28px 20px;
+      text-align: center;
+      border-radius: 20px;
+    }
+
+    .info-item .icon {
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 8px rgba(196, 181, 253, 0.2));
+    }
+
+    .info-item .label {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+
+    .info-item .value {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .info-item .value.v-rose { color: var(--rose); }
+    .info-item .value.v-mint { color: var(--mint); }
+    .info-item .value.v-gold { color: var(--gold); }
+    .info-item .value.v-lav { color: var(--lavender); }
+
+    /* ==================== FEATURES ==================== */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      padding: 36px;
+      border-radius: 24px;
+      animation: floatSoft 8s ease-in-out infinite;
+    }
+
+    .feature-card:nth-child(1) { animation-delay: 0s; }
+    .feature-card:nth-child(2) { animation-delay: -2s; }
+    .feature-card:nth-child(3) { animation-delay: -4s; }
+    .feature-card:nth-child(4) { animation-delay: -6s; }
+    .feature-card:nth-child(5) { animation-delay: -1s; }
+    .feature-card:nth-child(6) { animation-delay: -3s; }
+
+    .feature-card:hover {
+      transform: translateY(-6px);
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      display: block;
+      filter: drop-shadow(0 0 10px rgba(196, 181, 253, 0.2));
+    }
+
+    .feature-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.15rem;
+      margin-bottom: 10px;
+      color: var(--mist);
+    }
+
+    .feature-desc {
+      font-size: 0.88rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    @keyframes floatSoft {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    /* ==================== REVIEWS ==================== */
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .review-card {
+      padding: 32px;
+      border-radius: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .review-card::before {
+      content: '\201C';
+      font-family: var(--font-display);
+      font-size: 5rem;
+      color: rgba(196, 181, 253, 0.06);
+      position: absolute;
+      top: -8px; left: 18px;
+      line-height: 1;
+    }
+
+    .review-stars {
+      color: var(--gold);
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+      text-shadow: 0 0 10px rgba(253, 230, 138, 0.2);
+    }
+
+    .review-text {
+      font-size: 0.95rem;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .review-meta {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+
+    /* ==================== TIPS ==================== */
+    .tips-list {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .tip-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 22px 26px;
+      border-radius: 18px;
+    }
+
+    .tip-item .number {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--rose);
+      min-width: 28px;
+      text-shadow: 0 0 15px rgba(249, 168, 212, 0.2);
+    }
+
+    .tip-item .text {
+      font-size: 0.92rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .tip-item .text strong {
+      color: var(--mist);
+      font-weight: 600;
+    }
+
+    /* ==================== CTA ==================== */
+    .cta {
+      padding: 140px 48px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(196, 181, 253, 0.06), transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(1.8rem, 4.5vw, 3.2rem);
+      margin-bottom: 16px;
+      color: var(--mist);
+    }
+
+    .cta-sub {
+      font-size: 1rem;
+      color: var(--text-dim);
+      margin-bottom: 44px;
+      line-height: 1.8;
+    }
+
+    .cta-btn {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.05rem;
+      padding: 18px 44px;
+      border-radius: 100px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, var(--rose), var(--lavender));
+      color: var(--bg-deep);
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 0 30px rgba(249, 168, 212, 0.15);
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 50px rgba(249, 168, 212, 0.25);
+    }
+
+    /* ==================== FOOTER ==================== */
+    footer {
+      padding: 40px 48px;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ==================== REVEAL ==================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(35px);
+      transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes slideUp { to { transform: translateY(0); } }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 768px) {
+      .section { padding: 80px 24px; }
+      .cta { padding: 100px 24px; }
+      .hero-stats { gap: 12px; }
+      .hero-stat { padding: 14px 20px; min-width: 80px; }
+      .features-grid, .reviews-grid { grid-template-columns: 1fr; }
+      .info-grid { grid-template-columns: repeat(2, 1fr); }
+      footer { padding: 30px 24px; }
+    }
+
+    @media (max-width: 480px) {
+      .info-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Starfield -->
+  <canvas id="starfield"></canvas>
+
+  <!-- Aurora -->
+  <div class="aurora-container">
+    <div class="aurora aurora-1"></div>
+    <div class="aurora aurora-2"></div>
+    <div class="aurora aurora-3"></div>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge">키이스케이프 홍대점</div>
+    <h1 class="hero-title">
+      <span class="line"><span class="soft-pink">삐릿</span></span>
+      <span class="line"><span class="soft-blue">뽀.</span></span>
+    </h1>
+    <p class="hero-sub">삐릿삐리...삐삐...삐...삐리리리리리!</p>
+    <div class="hero-stats">
+      <div class="hero-stat glass">
+        <div class="value">4.3</div>
+        <div class="label">Rating</div>
+      </div>
+      <div class="hero-stat glass">
+        <div class="value">75min</div>
+        <div class="label">Playtime</div>
+      </div>
+      <div class="hero-stat glass">
+        <div class="value">&#9733;&#9733;&#9733;&#9733;&#9734;</div>
+        <div class="label">Difficulty</div>
+      </div>
+      <div class="hero-stat glass">
+        <div class="value">2~3</div>
+        <div class="label">Players</div>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- Story -->
+  <section class="section" id="story">
+    <div class="section-header reveal">
+      <h2>Story</h2>
+      <div class="line-accent"></div>
+    </div>
+    <div class="story-content reveal">
+      <div class="story-signal">삐릿삐리...삐삐...삐...삐리리리리리!<br>삐리리리릿 삐리리 삐리뽀리 삐릿-뽀!</div>
+      <p class="story-text">
+        <em>로봇 공장</em> 어딘가에서 보내온 알 수 없는 신호.<br>
+        스토리는 일부러 두루뭉술하게 주어집니다.<br>
+        입장 후, 방 안에서 <em>직접 풀어내야</em> 하는 구조.<br><br>
+        귀여운 로봇 캐릭터들이 기다리는 이 공간에서<br>
+        당신은 신호의 의미를 <em>해독</em>해야 합니다.
+      </p>
+      <div class="story-box glass">
+        "스토리 자체보다, 스토리를 알아내가는 과정이<br>
+        이 테마의 진짜 매력입니다."
+      </div>
+    </div>
+  </section>
+
+  <!-- Info -->
+  <section class="section" id="info">
+    <div class="section-header reveal">
+      <h2>Theme Info</h2>
+      <div class="line-accent"></div>
+    </div>
+    <div class="info-grid reveal">
+      <div class="info-item glass">
+        <div class="icon">&#x1f3ae;</div>
+        <div class="label">장르</div>
+        <div class="value v-rose">어드벤처</div>
+      </div>
+      <div class="info-item glass">
+        <div class="icon">&#x23f1;</div>
+        <div class="label">플레이타임</div>
+        <div class="value v-mint">75분</div>
+      </div>
+      <div class="info-item glass">
+        <div class="icon">&#x1f465;</div>
+        <div class="label">추천 인원</div>
+        <div class="value v-lav">2~3인</div>
+      </div>
+      <div class="info-item glass">
+        <div class="icon">&#x2b50;</div>
+        <div class="label">난이도</div>
+        <div class="value v-gold">&#9733;&#9733;&#9733;&#9733;&#9734;</div>
+      </div>
+      <div class="info-item glass">
+        <div class="icon">&#x1f4b0;</div>
+        <div class="label">가격</div>
+        <div class="value">27,000원/인</div>
+      </div>
+      <div class="info-item glass">
+        <div class="icon">&#x1f6a9;</div>
+        <div class="label">공포도</div>
+        <div class="value v-mint">0 (없음)</div>
+      </div>
+      <div class="info-item glass">
+        <div class="icon">&#x1f517;</div>
+        <div class="label">장치:자물쇠</div>
+        <div class="value v-rose">7 : 3</div>
+      </div>
+      <div class="info-item glass">
+        <div class="icon">&#x1f4cd;</div>
+        <div class="label">위치</div>
+        <div class="value">홍대 (상수역)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="section" id="features">
+    <div class="section-header reveal">
+      <h2>What Makes It Special</h2>
+      <div class="line-accent"></div>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card glass reveal">
+        <span class="feature-icon">&#x1f916;</span>
+        <h3 class="feature-title">귀여운 로봇 세계관</h3>
+        <p class="feature-desc">로봇 공장을 배경으로 한 독특한 세계관. 귀엽고 개성 있는 인테리어로 입장 순간부터 몰입됩니다.</p>
+      </div>
+      <div class="feature-card glass reveal">
+        <span class="feature-icon">&#x2699;&#xfe0f;</span>
+        <h3 class="feature-title">장치 러버의 성지</h3>
+        <p class="feature-desc">장치:자물쇠 비율 7:3. 독특한 발동 방식의 장치들이 가득. 장치를 좋아한다면 반드시 방문해야 할 테마.</p>
+      </div>
+      <div class="feature-card glass reveal">
+        <span class="feature-icon">&#x1f3a0;</span>
+        <h3 class="feature-title">놀이공원 같은 연출</h3>
+        <p class="feature-desc">화려한 조명과 일렉트로닉한 분위기. "놀이공원에 온 것 같다"는 후기가 나올 정도의 비주얼.</p>
+      </div>
+      <div class="feature-card glass reveal">
+        <span class="feature-icon">&#x1f3c3;</span>
+        <h3 class="feature-title">높은 활동성</h3>
+        <p class="feature-desc">기어가고, 몸을 구겨 넣는 구간 존재. 편한 옷은 필수! 긴 치마와 구두는 절대 금지.</p>
+      </div>
+      <div class="feature-card glass reveal">
+        <span class="feature-icon">&#x1f50d;</span>
+        <h3 class="feature-title">관찰력이 핵심</h3>
+        <p class="feature-desc">단서가 대놓고 주어지지 않습니다. 2개 이상의 단서를 조합해야 하는 퍼즐 구성. 꼼꼼한 탐색이 필요.</p>
+      </div>
+      <div class="feature-card glass reveal">
+        <span class="feature-icon">&#x2728;</span>
+        <h3 class="feature-title">킬링포인트</h3>
+        <p class="feature-desc">"오, 와!" 하는 순간이 있는 테마. 기승전결 중 엔딩의 감동 포인트가 특히 인상적.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews -->
+  <section class="section" id="reviews">
+    <div class="section-header reveal">
+      <h2>Reviews</h2>
+      <div class="line-accent"></div>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card glass reveal">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="review-text">장치가 너무 재밌어요! 하나하나 발동될 때마다 소름 돋았어요. 귀엽고 신기하고, 방탈출 좋아하면 꼭 해보세요.</p>
+        <div class="review-meta">방탈출 후기 블로그</div>
+      </div>
+      <div class="review-card glass reveal">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</div>
+        <p class="review-text">놀이공원 같은 느낌! 비주얼이 정말 예쁘고 공간이 알차게 채워져 있어서 스케일이 느껴졌어요. 2인이 딱 좋습니다.</p>
+        <div class="review-meta">방탈출 리뷰어</div>
+      </div>
+      <div class="review-card glass reveal">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="review-text">삐릿뽀 감성 최고... 대기실부터 목욕탕 컨셉으로 너무 이쁘고, 탈출 후 보드판 꾸미기도 재밌어요. 없어지기 전에 꼭 가세요!</p>
+        <div class="review-meta">네이버 블로그</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tips -->
+  <section class="section" id="tips">
+    <div class="section-header reveal">
+      <h2>Before You Go</h2>
+      <div class="line-accent"></div>
+    </div>
+    <div class="tips-list">
+      <div class="tip-item glass reveal">
+        <span class="number">01</span>
+        <span class="text"><strong>편한 옷 필수</strong> — 기어가는 구간이 있어요. 긴 치마, 구두, 불편한 옷은 절대 안 됩니다.</span>
+      </div>
+      <div class="tip-item glass reveal">
+        <span class="number">02</span>
+        <span class="text"><strong>2~3인 추천</strong> — 좁은 구간이 있어 4인은 비추. 2인이 가장 이상적입니다.</span>
+      </div>
+      <div class="tip-item glass reveal">
+        <span class="number">03</span>
+        <span class="text"><strong>조조할인 활용</strong> — 첫 타임 예약 시 팀당 10,000원 할인!</span>
+      </div>
+      <div class="tip-item glass reveal">
+        <span class="number">04</span>
+        <span class="text"><strong>꼼꼼히 관찰</strong> — 단서가 숨겨져 있어요. 모든 것을 의심하고 조합해보세요.</span>
+      </div>
+      <div class="tip-item glass reveal">
+        <span class="number">05</span>
+        <span class="text"><strong>원웨이 구간 주의</strong> — 일부 구간은 되돌아갈 수 없어요. 넘어가기 전 꼭 확인!</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <h2 class="cta-title reveal">삐릿뽀의 신호를 받을 준비가 되셨나요?</h2>
+    <p class="cta-sub reveal">지금 예약하고, 로봇 공장의 비밀을 풀어보세요.</p>
+    <a href="https://keyescape.co.kr" target="_blank" class="cta-btn reveal">
+      예약하러 가기 <span>&rarr;</span>
+    </a>
+  </section>
+
+  <footer>
+    <p>키이스케이프 홍대점 &middot; 삐릿-뽀</p>
+  </footer>
+
+  <script>
+    /* ==================== STARFIELD / FIREFLIES ==================== */
+    const canvas = document.getElementById('starfield');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = document.body.scrollHeight;
+    }
+
+    function createParticles() {
+      particles = [];
+      const count = Math.floor((canvas.width * canvas.height) / 8000);
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 2 + 0.5,
+          speedX: (Math.random() - 0.5) * 0.15,
+          speedY: (Math.random() - 0.5) * 0.1,
+          opacity: Math.random() * 0.6 + 0.2,
+          pulse: Math.random() * Math.PI * 2,
+          pulseSpeed: Math.random() * 0.02 + 0.005,
+          color: ['#c4b5fd', '#f9a8d4', '#fde68a', '#67e8f9', '#e8e0ff'][Math.floor(Math.random() * 5)]
+        });
+      }
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+        p.pulse += p.pulseSpeed;
+
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+
+        const glow = p.opacity * (0.6 + 0.4 * Math.sin(p.pulse));
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = glow;
+        ctx.fill();
+
+        // soft glow
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = glow * 0.1;
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(drawParticles);
+    }
+
+    resizeCanvas();
+    createParticles();
+    drawParticles();
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      createParticles();
+    });
+
+    /* ==================== SCROLL REVEAL ==================== */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
