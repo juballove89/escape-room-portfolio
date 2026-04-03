@@ -1,0 +1,1947 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>정주영 방탈출제작소 — 꿈을 현실로</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ==================== RESET & VARIABLES ==================== */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0d0d1a;
+      --bg-card: #16162a;
+      --lime: #c8ff00;
+      --coral: #ff6b6b;
+      --cyan: #00d4ff;
+      --violet: #b366ff;
+      --text: #e8e8f0;
+      --text-dim: #8888a0;
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* ==================== CUSTOM CURSOR ==================== */
+    .cursor {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--lime);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+      mix-blend-mode: difference;
+    }
+
+    .cursor.hover {
+      transform: scale(2.5);
+      background: var(--lime);
+      border-color: var(--lime);
+    }
+
+    .cursor-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--lime);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.08s ease;
+    }
+
+    /* ==================== GRAIN + SCANLINES OVERLAY ==================== */
+    .grain {
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      z-index: 9998;
+      pointer-events: none;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    .scanlines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 9997;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 2px,
+        rgba(0, 0, 0, 0.03) 2px,
+        rgba(0, 0, 0, 0.03) 4px
+      );
+    }
+
+    /* ==================== GLITCH EFFECT ==================== */
+    .glitch {
+      position: relative;
+    }
+
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+    }
+
+    .glitch::before {
+      color: var(--cyan);
+      animation: glitch-1 4s infinite linear alternate-reverse;
+    }
+
+    .glitch::after {
+      color: var(--coral);
+      animation: glitch-2 4s infinite linear alternate-reverse;
+    }
+
+    .glitch:hover::before,
+    .glitch:hover::after {
+      opacity: 0.8;
+    }
+
+    @keyframes glitch-1 {
+      0%, 90%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); opacity: 0; }
+      92% { clip-path: inset(20% 0 40% 0); transform: translate(-4px, 2px); opacity: 0.8; }
+      94% { clip-path: inset(60% 0 10% 0); transform: translate(4px, -2px); opacity: 0.8; }
+      96% { clip-path: inset(40% 0 30% 0); transform: translate(-2px, 1px); opacity: 0.8; }
+      98% { clip-path: inset(10% 0 70% 0); transform: translate(2px, -1px); opacity: 0.8; }
+    }
+
+    @keyframes glitch-2 {
+      0%, 90%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); opacity: 0; }
+      91% { clip-path: inset(50% 0 20% 0); transform: translate(3px, -2px); opacity: 0.8; }
+      93% { clip-path: inset(10% 0 60% 0); transform: translate(-3px, 2px); opacity: 0.8; }
+      95% { clip-path: inset(70% 0 5% 0); transform: translate(2px, 1px); opacity: 0.8; }
+      97% { clip-path: inset(30% 0 40% 0); transform: translate(-2px, -1px); opacity: 0.8; }
+    }
+
+    /* ==================== DECRYPT TEXT ==================== */
+    .decrypt-text {
+      display: inline-block;
+    }
+
+    .decrypt-text .char {
+      display: inline-block;
+      transition: transform 0.1s;
+    }
+
+    .decrypt-text .char.scrambling {
+      color: var(--lime);
+      text-shadow: 0 0 8px rgba(200, 255, 0, 0.5);
+    }
+
+    /* ==================== MORPHING BLOB ==================== */
+    .morph-blob {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      filter: blur(60px);
+      opacity: 0.2;
+      animation: morphBlob 15s ease-in-out infinite;
+    }
+
+    .morph-blob-1 {
+      background: var(--violet);
+      top: 5%;
+      left: 0%;
+      animation-delay: 0s;
+    }
+
+    .morph-blob-2 {
+      background: var(--cyan);
+      top: 50%;
+      right: 5%;
+      animation-delay: -5s;
+    }
+
+    .morph-blob-3 {
+      background: var(--coral);
+      top: 25%;
+      right: 25%;
+      animation-delay: -10s;
+    }
+
+    @keyframes morphBlob {
+      0%   { border-radius: 40% 60% 60% 40% / 60% 40% 60% 40%; transform: translate(0, 0) rotate(0deg) scale(1); }
+      25%  { border-radius: 60% 40% 30% 70% / 40% 60% 70% 30%; transform: translate(30px, -40px) rotate(90deg) scale(1.1); }
+      50%  { border-radius: 30% 70% 50% 50% / 70% 30% 50% 50%; transform: translate(-20px, 20px) rotate(180deg) scale(0.95); }
+      75%  { border-radius: 50% 50% 70% 30% / 30% 70% 40% 60%; transform: translate(15px, 35px) rotate(270deg) scale(1.05); }
+      100% { border-radius: 40% 60% 60% 40% / 60% 40% 60% 40%; transform: translate(0, 0) rotate(360deg) scale(1); }
+    }
+
+    /* ==================== VHS FLICKER ==================== */
+    .vhs-flicker {
+      animation: vhsFlicker 0.15s infinite;
+    }
+
+    @keyframes vhsFlicker {
+      0% { opacity: 0.97; }
+      50% { opacity: 1; }
+      100% { opacity: 0.98; }
+    }
+
+    /* ==================== FLOATING SHAPES ==================== */
+    .shapes-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .shape {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+      animation: float 20s ease-in-out infinite;
+    }
+
+    .shape-1 {
+      width: 400px;
+      height: 400px;
+      background: var(--violet);
+      top: 10%;
+      left: 5%;
+      animation-delay: 0s;
+    }
+
+    .shape-2 {
+      width: 300px;
+      height: 300px;
+      background: var(--cyan);
+      top: 60%;
+      right: 10%;
+      animation-delay: -7s;
+    }
+
+    .shape-3 {
+      width: 250px;
+      height: 250px;
+      background: var(--coral);
+      top: 30%;
+      right: 30%;
+      animation-delay: -14s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(30px, -40px) rotate(5deg); }
+      50% { transform: translate(-20px, 20px) rotate(-3deg); }
+      75% { transform: translate(15px, 35px) rotate(2deg); }
+    }
+
+    /* ==================== NAV ==================== */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 24px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      mix-blend-mode: difference;
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      position: relative;
+      padding: 4px 0;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--lime);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* ==================== HERO ==================== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 48px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-greeting {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      color: var(--lime);
+      margin-bottom: 16px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.6s ease forwards 0.3s;
+    }
+
+    .hero-name {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(3.5rem, 10vw, 9rem);
+      line-height: 0.95;
+      margin-bottom: 24px;
+    }
+
+    .hero-name .line {
+      display: block;
+      overflow: hidden;
+    }
+
+    .hero-name .line span {
+      display: inline-block;
+      transform: translateY(120%);
+      animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .hero-name .line:nth-child(2) span {
+      animation-delay: 0.15s;
+    }
+
+    .hero-name .accent {
+      color: var(--lime);
+    }
+
+    .hero-tags {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      padding: 8px 20px;
+      border: 1px solid rgba(200, 255, 0, 0.3);
+      border-radius: 100px;
+      color: var(--text-dim);
+      opacity: 0;
+      transform: translateY(20px) scale(0.9);
+      animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      transition: border-color 0.3s, color 0.3s, background 0.3s;
+    }
+
+    .tag:nth-child(1) { animation-delay: 0.6s; }
+    .tag:nth-child(2) { animation-delay: 0.7s; }
+    .tag:nth-child(3) { animation-delay: 0.8s; }
+
+    .tag:hover {
+      border-color: var(--lime);
+      color: var(--bg);
+      background: var(--lime);
+    }
+
+    .hero-cta {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.6s ease forwards 1s;
+    }
+
+    .hero-cta a {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--bg);
+      background: var(--lime);
+      padding: 16px 40px;
+      border-radius: 100px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .hero-cta a:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 40px rgba(200, 255, 0, 0.25);
+    }
+
+    .hero-cta .arrow {
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+
+    .hero-cta a:hover .arrow {
+      transform: translateX(5px);
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 1.2s;
+    }
+
+    .hero-scroll span {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--lime), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 1; transform: scaleY(1); }
+      50% { opacity: 0.3; transform: scaleY(0.5); }
+    }
+
+    /* ==================== SERVICES ==================== */
+    .services {
+      padding: 120px 48px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 64px;
+    }
+
+    .service-card {
+      padding: 48px;
+      border-radius: 24px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      transition: transform 0.4s ease, border-color 0.4s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(200, 255, 0, 0.15);
+    }
+
+    .service-card.dark {
+      background: var(--bg-card);
+    }
+
+    .service-card.accent {
+      background: linear-gradient(135deg, rgba(200, 255, 0, 0.08), rgba(200, 255, 0, 0.02));
+      border-color: rgba(200, 255, 0, 0.1);
+    }
+
+    .service-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      pointer-events: none;
+    }
+
+    .service-card:nth-child(1)::after { background: var(--coral); }
+    .service-card:nth-child(2)::after { background: var(--lime); }
+
+    .service-icon {
+      font-size: 2.5rem;
+      margin-bottom: 28px;
+      display: block;
+    }
+
+    .service-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .service-sub {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--lime);
+      margin-bottom: 20px;
+    }
+
+    .service-desc {
+      font-size: 1rem;
+      color: var(--text-dim);
+      line-height: 1.8;
+      margin-bottom: 28px;
+    }
+
+    .service-features {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .service-feature {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    .service-feature .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--lime);
+      margin-top: 8px;
+      flex-shrink: 0;
+    }
+
+    .service-highlight {
+      margin-top: 32px;
+      padding: 20px 24px;
+      background: rgba(200, 255, 0, 0.06);
+      border-left: 3px solid var(--lime);
+      border-radius: 0 12px 12px 0;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--lime);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .services { padding: 80px 24px; }
+      .services-grid { grid-template-columns: 1fr; }
+      .service-card { padding: 32px; }
+      .service-title { font-size: 1.4rem; }
+    }
+
+    /* ==================== TEAM ==================== */
+    .team {
+      padding: 120px 48px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 64px;
+    }
+
+    .team-card {
+      background: var(--bg-card);
+      border-radius: 24px;
+      padding: 44px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.4s ease, border-color 0.4s ease;
+    }
+
+    .team-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(200, 255, 0, 0.12);
+    }
+
+    .team-card::after {
+      content: '';
+      position: absolute;
+      bottom: -60px;
+      right: -60px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.1;
+      pointer-events: none;
+    }
+
+    .team-card:nth-child(1)::after { background: var(--lime); }
+    .team-card:nth-child(2)::after { background: var(--coral); }
+
+    .team-role {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--lime);
+      margin-bottom: 12px;
+    }
+
+    .team-name {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 2rem;
+      margin-bottom: 6px;
+    }
+
+    .team-handle {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-bottom: 20px;
+    }
+
+    .team-bio {
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .team-career {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .team-career-item {
+      display: flex;
+      gap: 12px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+
+    .team-career-item .year {
+      font-family: var(--font-mono);
+      color: var(--lime);
+      white-space: nowrap;
+      min-width: 70px;
+    }
+
+    .team-career-item .desc {
+      color: var(--text-dim);
+    }
+
+    @media (max-width: 768px) {
+      .team { padding: 80px 24px; }
+      .team-grid { grid-template-columns: 1fr; }
+      .team-card { padding: 32px; }
+      .team-name { font-size: 1.5rem; }
+    }
+
+    /* ==================== PROJECTS ==================== */
+    .projects {
+      padding: 120px 48px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 64px;
+    }
+
+    .section-header h2 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+    }
+
+    .section-header .line-accent {
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(to right, var(--lime), transparent);
+    }
+
+    .section-header .count {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--lime);
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 32px;
+    }
+
+    .project-card {
+      background: var(--bg-card);
+      border-radius: 20px;
+      padding: 36px;
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(200, 255, 0, 0.06), transparent 60%);
+      pointer-events: none;
+      transition: opacity 0.3s;
+      opacity: 0;
+    }
+
+    .project-card:hover::before {
+      opacity: 1;
+    }
+
+    .project-card:hover {
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 20px rgba(200, 255, 0, 0.05);
+      border-color: rgba(200, 255, 0, 0.12);
+    }
+
+    .project-card:hover .card-title {
+      animation: cardGlitch 0.3s ease;
+    }
+
+    @keyframes cardGlitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 1px); text-shadow: 2px 0 var(--cyan), -2px 0 var(--coral); }
+      40% { transform: translate(2px, -1px); text-shadow: -2px 0 var(--cyan), 2px 0 var(--coral); }
+      60% { transform: translate(-1px, -1px); text-shadow: 1px 0 var(--cyan), -1px 0 var(--coral); }
+      80% { transform: translate(1px, 1px); text-shadow: -1px 0 var(--cyan), 1px 0 var(--coral); }
+      100% { transform: translate(0); text-shadow: none; }
+    }
+
+    .card-number {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 5rem;
+      color: rgba(200, 255, 0, 0.06);
+      position: absolute;
+      top: -10px;
+      right: 20px;
+      line-height: 1;
+    }
+
+    .card-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .card-icon.lime { background: rgba(200, 255, 0, 0.12); }
+    .card-icon.coral { background: rgba(255, 107, 107, 0.12); }
+    .card-icon.cyan { background: rgba(0, 212, 255, 0.12); }
+    .card-icon.violet { background: rgba(179, 102, 255, 0.12); }
+
+    .card-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--lime);
+      margin-bottom: 12px;
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.6rem;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .card-desc {
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .card-tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 5px 12px;
+      border-radius: 100px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-dim);
+    }
+
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--lime);
+      transition: gap 0.3s ease;
+    }
+
+    .card-link:hover {
+      gap: 14px;
+    }
+
+    /* ==================== MODAL ==================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: var(--bg-card);
+      border-radius: 24px;
+      max-width: 900px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 0;
+      transform: translateY(30px) scale(0.95);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .modal-overlay.active .modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(0, 0, 0, 0.5);
+      color: var(--text);
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: none;
+      z-index: 10001;
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    .modal-close:hover {
+      background: rgba(200, 255, 0, 0.15);
+      border-color: var(--lime);
+    }
+
+    .modal-gallery {
+      width: 100%;
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 24px 24px 0 0;
+    }
+
+    .modal-gallery::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .modal-gallery::-webkit-scrollbar-thumb {
+      background: var(--lime);
+      border-radius: 4px;
+    }
+
+    .modal-gallery img {
+      min-width: 100%;
+      max-height: 500px;
+      object-fit: contain;
+      scroll-snap-align: start;
+      background: #0a0a16;
+    }
+
+    .modal-body {
+      padding: 36px;
+    }
+
+    .modal-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--lime);
+      margin-bottom: 8px;
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 2rem;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .modal-desc {
+      font-size: 1rem;
+      color: var(--text-dim);
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .modal-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .modal-info-item {
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .modal-info-item .label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+    }
+
+    .modal-info-item .value {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .modal-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .modal-tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 6px 14px;
+      border-radius: 100px;
+      background: rgba(200, 255, 0, 0.08);
+      color: var(--lime);
+      border: 1px solid rgba(200, 255, 0, 0.15);
+    }
+
+    @media (max-width: 768px) {
+      .modal { width: 95%; max-height: 90vh; }
+      .modal-gallery img { height: 240px; }
+      .modal-body { padding: 24px; }
+      .modal-title { font-size: 1.5rem; }
+    }
+
+    /* ==================== CTA SECTION ==================== */
+    .cta-section {
+      padding: 160px 48px;
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(200, 255, 0, 0.08), transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--lime);
+      margin-bottom: 24px;
+    }
+
+    .cta-headline {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .cta-headline .lime {
+      color: var(--lime);
+    }
+
+    .cta-sub {
+      font-size: 1.15rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+      max-width: 600px;
+      margin: 0 auto 48px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+
+    .cta-btn {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 18px 44px;
+      border-radius: 100px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: none;
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-3px);
+    }
+
+    .cta-btn.primary {
+      background: var(--lime);
+      color: var(--bg);
+    }
+
+    .cta-btn.primary:hover {
+      box-shadow: 0 12px 50px rgba(200, 255, 0, 0.3);
+    }
+
+    .cta-btn.secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .cta-btn.secondary:hover {
+      border-color: var(--lime);
+      box-shadow: 0 12px 50px rgba(200, 255, 0, 0.1);
+    }
+
+    .cta-btn .arrow {
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+
+    .cta-btn:hover .arrow {
+      transform: translateX(5px);
+    }
+
+    .cta-scope {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+
+    .cta-scope-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .cta-scope-item .icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(200, 255, 0, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    @media (max-width: 768px) {
+      .cta-section { padding: 100px 24px; }
+      .cta-scope { gap: 24px; }
+    }
+
+    /* ==================== FOOTER ==================== */
+    footer {
+      padding: 60px 48px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-left {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+
+    .footer-left .dim {
+      color: var(--text-dim);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      transition: color 0.3s;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-links a:hover {
+      color: var(--lime);
+    }
+
+    /* ==================== REVEAL ANIMATION ==================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ==================== KEYFRAMES ==================== */
+    @keyframes slideUp {
+      to { transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes popIn {
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 768px) {
+      nav { padding: 20px 24px; }
+      .hero { padding: 0 24px; }
+      .projects { padding: 80px 24px; }
+      footer { padding: 40px 24px; flex-direction: column; gap: 24px; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .hero-name { font-size: clamp(2.5rem, 12vw, 5rem); }
+      body { cursor: auto; }
+      .cursor, .cursor-dot { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      .nav-links { gap: 16px; }
+      .nav-links a { font-size: 0.7rem; }
+      .project-card { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
+
+  <!-- Grain + Scanlines -->
+  <div class="grain"></div>
+  <div class="scanlines"></div>
+
+  <!-- Morphing Blobs -->
+  <div class="shapes-container" id="shapes">
+    <div class="morph-blob morph-blob-1"></div>
+    <div class="morph-blob morph-blob-2"></div>
+    <div class="morph-blob morph-blob-3"></div>
+  </div>
+
+  <!-- Nav -->
+  <nav>
+    <div class="nav-logo">정주영<span style="color: var(--lime);">.</span></div>
+    <ul class="nav-links">
+      <li><a href="#services" data-hover>Services</a></li>
+      <li><a href="#projects" data-hover>Portfolio</a></li>
+      <li><a href="https://www.instagram.com/jeong.jy0321" target="_blank" data-hover>Instagram</a></li>
+      <li><a href="mailto:eve_escape@naver.com" data-hover>Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <div class="hero-greeting decrypt-text" data-decrypt>// 꿈을 현실로, 상상 속의 미스터리를 현실의 감각으로</div>
+    <h1 class="hero-name glitch" data-text="정주영 방탈출제작소.">
+      <span class="line"><span>정주영</span></span>
+      <span class="line"><span>방탈출제작소<span class="accent">.</span></span></span>
+    </h1>
+    <div class="hero-tags">
+      <span class="tag">Escape Room Design</span>
+      <span class="tag">Immersive Experience</span>
+      <span class="tag">자체 장치 개발</span>
+    </div>
+    <div class="hero-cta">
+      <a href="#projects" data-hover>
+        포트폴리오 보기 <span class="arrow">&rarr;</span>
+      </a>
+    </div>
+    <div class="hero-scroll">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="services" id="services">
+    <div class="section-header reveal">
+      <h2>What We Do</h2>
+      <div class="line-accent"></div>
+      <span class="count">02</span>
+    </div>
+
+    <div class="services-grid">
+
+      <!-- 방탈출 제작 -->
+      <div class="service-card dark reveal">
+        <span class="service-icon">&#x1f3ad;</span>
+        <h3 class="service-title">방탈출 테마 제작</h3>
+        <div class="service-sub">Escape Room Production</div>
+        <p class="service-desc">
+          기획부터 공간 설계, 장치 제작, 연출까지 —
+          하나의 세계관을 통째로 만들어냅니다.
+          브랜드의 색채와 기획 의도를 꿰뚫어,
+          잊을 수 없는 시네마틱 탈출 경험을 완성합니다.
+        </p>
+        <div class="service-features">
+          <div class="service-feature">
+            <span class="dot"></span>
+            <span>테마 기획 · 스토리 · 세계관 설계</span>
+          </div>
+          <div class="service-feature">
+            <span class="dot"></span>
+            <span>공간 설계 · 시공 · 인테리어</span>
+          </div>
+          <div class="service-feature">
+            <span class="dot"></span>
+            <span>이머시브(관객 참여형) 연출</span>
+          </div>
+          <div class="service-feature">
+            <span class="dot"></span>
+            <span>IP 콜라보레이션 · 팝업스토어</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- IoT 장치 -->
+      <div class="service-card accent reveal">
+        <span class="service-icon">&#x26a1;</span>
+        <h3 class="service-title">IoT 연출 · 장치</h3>
+        <div class="service-sub">Smart Device & Automation</div>
+        <p class="service-desc">
+          복잡한 배선은 과거의 방식입니다.
+          자체 개발 IoT 장치로 배선을 극단적으로 단순화하고,
+          AI가 연출 로직을 제어합니다.
+          기존 전기공사 비용의 절반도 안 되는 구조로,
+          더 강력한 퍼포먼스를 끌어냅니다.
+        </p>
+        <div class="service-features">
+          <div class="service-feature">
+            <span class="dot"></span>
+            <span>무선 기반 — 배선 최소화, 시공 기간 단축</span>
+          </div>
+          <div class="service-feature">
+            <span class="dot"></span>
+            <span>AI 제어 — 연출 타이밍 · 조건 분기 자동화</span>
+          </div>
+          <div class="service-feature">
+            <span class="dot"></span>
+            <span>전기공사 비용 대폭 절감</span>
+          </div>
+          <div class="service-feature">
+            <span class="dot"></span>
+            <span>원격 모니터링 · 실시간 장치 상태 관리</span>
+          </div>
+        </div>
+        <div class="service-highlight">
+          "기존 전기공사 방식 대비 배선량 80% 감소,<br>
+          AI 기반 자동 연출로 운영 인력 최소화."
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Team -->
+  <section class="team" id="team">
+    <div class="section-header reveal">
+      <h2>Team</h2>
+      <div class="line-accent"></div>
+      <span class="count">02</span>
+    </div>
+
+    <div class="team-grid">
+
+      <!-- 정주영 -->
+      <div class="team-card reveal">
+        <div class="team-role">Representative · Director</div>
+        <h3 class="team-name">정주영</h3>
+        <div class="team-handle">@jeong.jy0321</div>
+        <p class="team-bio">
+          기획, 장치 개발, 공간 설계, 마케팅까지 —
+          방탈출의 모든 것을 설계하는 사람.
+          인플루언서 마케팅도 직접 진행합니다.
+        </p>
+        <div class="team-career">
+          <div class="team-career-item">
+            <span class="year">2018~</span>
+            <span class="desc">키이스케이프 홍대 점주 (2019 올해의 매장)</span>
+          </div>
+          <div class="team-career-item">
+            <span class="year">2019~21</span>
+            <span class="desc">셜록홈즈 IP 사업 팀장</span>
+          </div>
+          <div class="team-career-item">
+            <span class="year">2020~21</span>
+            <span class="desc">네이버웹툰 OFFLINE 기획·제작 총괄</span>
+          </div>
+          <div class="team-career-item">
+            <span class="year">2023~</span>
+            <span class="desc">EVEREST ESCAPE 대표</span>
+          </div>
+          <div class="team-career-item">
+            <span class="year">2024</span>
+            <span class="desc">정주영 방탈출연구소 대표 · 한국언론진흥재단 팝업스토어</span>
+          </div>
+          <div class="team-career-item">
+            <span class="year">2026</span>
+            <span class="desc">미스터리담 — 백석담 기획·제작 총괄</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 김정원 -->
+      <div class="team-card reveal">
+        <div class="team-role">Theme Producer</div>
+        <h3 class="team-name">김정원</h3>
+        <div class="team-handle">제작자</div>
+        <p class="team-bio">
+          테마를 구현하는 손. 공간 안에서 벌어지는 모든 경험을
+          구체적인 장치와 연출로 만들어내는 제작 전문가.
+        </p>
+        <div class="team-career">
+          <div class="team-career-item">
+            <span class="year">—</span>
+            <span class="desc">홍대 블랙룸 이스케이프 테마 제작</span>
+          </div>
+          <div class="team-career-item">
+            <span class="year">—</span>
+            <span class="desc">강남 이스케이프랩 '이세계용사' 제작</span>
+          </div>
+          <div class="team-career-item">
+            <span class="year">2024</span>
+            <span class="desc">토끼굴 방탈출 '두껍아 두껍아 헌집줄게 새집다오' 제작</span>
+          </div>
+          <div class="team-career-item">
+            <span class="year">2026</span>
+            <span class="desc">미스터리담 '백석담' 기획</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section class="projects" id="projects">
+    <div class="section-header reveal">
+      <h2>Portfolio</h2>
+      <div class="line-accent"></div>
+      <span class="count">06</span>
+    </div>
+
+    <div class="projects-grid">
+
+      <!-- Card 1: EVEREST ESCAPE -->
+      <div class="project-card reveal" data-tilt>
+        <div class="card-number">01</div>
+        <div class="card-icon lime">&#x26f0;&#xfe0f;</div>
+        <div class="card-label">Flagship</div>
+        <h3 class="card-title">EVEREST ESCAPE</h3>
+        <p class="card-desc">
+          일산 평점 1등 방탈출 매장. 3시간 장시간 테마로
+          업계 최고 수준의 몰입형 경험을 제공합니다.
+          대표 기획 및 제작 총괄.
+        </p>
+        <div class="card-tags">
+          <span class="card-tag">방탈출</span>
+          <span class="card-tag">장시간 테마</span>
+          <span class="card-tag">기획 총괄</span>
+        </div>
+        <a href="#" class="card-link" data-hover onclick="event.preventDefault(); openModal('everest')">
+          자세히 보기 <span>&rarr;</span>
+        </a>
+      </div>
+
+      <!-- Card 2: 미스터리담 백석담 -->
+      <div class="project-card reveal" data-tilt>
+        <div class="card-number">02</div>
+        <div class="card-icon coral">&#x1f3ad;</div>
+        <div class="card-label">Immersive</div>
+        <h3 class="card-title">미스터리담 — 백석담</h3>
+        <p class="card-desc">
+          이머시브 테마(관객 참여형) 방탈출.
+          2026.01.29 오픈. 배우와 관객이 호흡하는
+          시네마틱한 탈출 경험.
+        </p>
+        <div class="card-tags">
+          <span class="card-tag">이머시브</span>
+          <span class="card-tag">관객 참여형</span>
+          <span class="card-tag">2026</span>
+        </div>
+        <a href="#" class="card-link" data-hover onclick="event.preventDefault(); openModal('mysterydam')">
+          자세히 보기 <span>&rarr;</span>
+        </a>
+      </div>
+
+      <!-- Card 3: NAVER 웹툰 OFFLINE -->
+      <div class="project-card reveal" data-tilt>
+        <div class="card-number">03</div>
+        <div class="card-icon cyan">&#x1f4f1;</div>
+        <div class="card-label">IP Collab</div>
+        <h3 class="card-title">NAVER 웹툰 OFFLINE</h3>
+        <p class="card-desc">
+          기획 / 시공 / 굿즈제작 / 방탈출 / 체험관 제작.
+          강남대로 200PY 규모 체험관 + 방탈출.
+          제작 참여도 100%.
+        </p>
+        <div class="card-tags">
+          <span class="card-tag">NAVER</span>
+          <span class="card-tag">IP 사업</span>
+          <span class="card-tag">200PY</span>
+        </div>
+        <a href="#" class="card-link" data-hover onclick="event.preventDefault(); openModal('naver')">
+          자세히 보기 <span>&rarr;</span>
+        </a>
+      </div>
+
+      <!-- Card 4: Carder x 셜록홈즈 -->
+      <div class="project-card reveal" data-tilt>
+        <div class="card-number">04</div>
+        <div class="card-icon violet">&#x1f0cf;</div>
+        <div class="card-label">In Progress</div>
+        <h3 class="card-title">CARDER — 셜록홈즈</h3>
+        <p class="card-desc">
+          셜록홈즈 협업 방탈출 테마. 자체 개발 장치
+          'Carder'와 결합한 차세대 방탈출 자동화 시스템.
+          현재 제작 진행 중.
+        </p>
+        <div class="card-tags">
+          <span class="card-tag">Sherlock Holmes</span>
+          <span class="card-tag">자동화</span>
+          <span class="card-tag">IoT</span>
+        </div>
+        <a href="#" class="card-link" data-hover onclick="event.preventDefault(); openModal('carder')">
+          자세히 보기 <span>&rarr;</span>
+        </a>
+      </div>
+
+      <!-- Card 5: 퍼즐북 -->
+      <div class="project-card reveal" data-tilt>
+        <div class="card-number">05</div>
+        <div class="card-icon cyan">&#x1f4d6;</div>
+        <div class="card-label">Publication</div>
+        <h3 class="card-title">정탐정과 미스터리 실종사건</h3>
+        <p class="card-desc">
+          방탈출 퍼즐북. 교보문고 취미분야 주간 5위 달성.
+          현재 2편 집필 중.
+        </p>
+        <div class="card-tags">
+          <span class="card-tag">퍼즐북</span>
+          <span class="card-tag">교보문고 TOP 5</span>
+          <span class="card-tag">2편 집필중</span>
+        </div>
+        <a href="#" class="card-link" data-hover onclick="event.preventDefault(); openModal('puzzlebook')">
+          자세히 보기 <span>&rarr;</span>
+        </a>
+      </div>
+
+      <!-- Card 6: 키이스케이프 홍대 -->
+      <div class="project-card reveal" data-tilt>
+        <div class="card-number">06</div>
+        <div class="card-icon lime">&#x1f3c6;</div>
+        <div class="card-label">Award</div>
+        <h3 class="card-title">키이스케이프 홍대</h3>
+        <p class="card-desc">
+          2018년부터 운영. 2019년 방탈출 올해의 매장,
+          방탈출어워즈 수상. 프랜차이즈 매장으로
+          업계 입문의 시작점.
+        </p>
+        <div class="card-tags">
+          <span class="card-tag">2019 수상</span>
+          <span class="card-tag">홍대</span>
+          <span class="card-tag">프랜차이즈</span>
+        </div>
+        <a href="#" class="card-link" data-hover onclick="event.preventDefault(); openModal('keyescape')">
+          자세히 보기 <span>&rarr;</span>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <button class="modal-close" id="modalClose" data-hover>&times;</button>
+    <div class="modal" id="modal">
+      <div class="modal-gallery" id="modalGallery"></div>
+      <div class="modal-body">
+        <div class="modal-label" id="modalLabel"></div>
+        <h2 class="modal-title" id="modalTitle"></h2>
+        <p class="modal-desc" id="modalDesc"></p>
+        <div class="modal-info" id="modalInfo"></div>
+        <div class="modal-tags" id="modalTags"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <section class="cta-section reveal" id="contact">
+    <div class="cta-eyebrow">Ready to build?</div>
+    <h2 class="cta-headline glitch" data-text="당신의 공간에 이야기를 만듭니다.">
+      당신의 공간에<br><span class="lime">이야기를 만듭니다.</span>
+    </h2>
+    <p class="cta-sub">
+      방탈출 테마 제작, IoT 장치 설계, 공간 연출 —<br>
+      기획부터 오픈까지, 한 팀이 끝까지 책임집니다.<br>
+      아이디어가 있다면, 지금 연락하세요.
+    </p>
+    <div class="cta-buttons">
+      <a href="mailto:eve_escape@naver.com" class="cta-btn primary" data-hover>
+        프로젝트 문의하기 <span class="arrow">&rarr;</span>
+      </a>
+      <a href="https://www.instagram.com/jeong.jy0321" target="_blank" class="cta-btn secondary" data-hover>
+        Instagram DM
+      </a>
+    </div>
+    <div class="cta-scope">
+      <div class="cta-scope-item">
+        <div class="icon">&#x1f3ad;</div>
+        <span>방탈출 테마 제작</span>
+      </div>
+      <div class="cta-scope-item">
+        <div class="icon">&#x26a1;</div>
+        <span>IoT 장치 설계·납품</span>
+      </div>
+      <div class="cta-scope-item">
+        <div class="icon">&#x1f3a8;</div>
+        <span>공간 연출·시공</span>
+      </div>
+      <div class="cta-scope-item">
+        <div class="icon">&#x1f4a1;</div>
+        <span>IP 콜라보·팝업</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-left">
+      꿈을 현실로<span class="dim">, 정주영 방탈출제작소.</span><br>
+      <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim);">eve_escape@naver.com</span>
+    </div>
+    <div class="footer-links">
+      <a href="https://www.instagram.com/jeong.jy0321" target="_blank" data-hover>Instagram</a>
+      <a href="mailto:eve_escape@naver.com" data-hover>Email</a>
+    </div>
+  </footer>
+
+  <script>
+    /* ==================== CUSTOM CURSOR ==================== */
+    const cursor = document.getElementById('cursor');
+    const cursorDot = document.getElementById('cursorDot');
+    let cursorX = 0, cursorY = 0;
+    let dotX = 0, dotY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      cursorX = e.clientX;
+      cursorY = e.clientY;
+    });
+
+    function animateCursor() {
+      dotX += (cursorX - dotX) * 0.15;
+      dotY += (cursorY - dotY) * 0.15;
+
+      cursor.style.left = cursorX - 10 + 'px';
+      cursor.style.top = cursorY - 10 + 'px';
+      cursorDot.style.left = dotX - 3 + 'px';
+      cursorDot.style.top = dotY - 3 + 'px';
+
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    document.querySelectorAll('[data-hover]').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    });
+
+    /* ==================== PARALLAX BLOBS ==================== */
+    document.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+
+      document.querySelectorAll('.morph-blob').forEach((blob, i) => {
+        const speed = (i + 1) * 20;
+        const currentTransform = getComputedStyle(blob).transform;
+        blob.style.marginLeft = `${x * speed}px`;
+        blob.style.marginTop = `${y * speed}px`;
+      });
+    });
+
+    /* ==================== DECRYPT TEXT ANIMATION ==================== */
+    const scrambleChars = '!@#$%^&*()_+-=[]{}|;:,./<>?~`01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    function decryptText(element) {
+      const original = element.getAttribute('data-original') || element.textContent;
+      element.setAttribute('data-original', original);
+      const length = original.length;
+      let iteration = 0;
+
+      const interval = setInterval(() => {
+        element.textContent = original
+          .split('')
+          .map((char, index) => {
+            if (index < iteration) return original[index];
+            if (char === ' ') return ' ';
+            return scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+          })
+          .join('');
+
+        if (iteration >= length) clearInterval(interval);
+        iteration += 1 / 2;
+      }, 30);
+    }
+
+    // Run decrypt on hero greeting after page load
+    setTimeout(() => {
+      const greeting = document.querySelector('[data-decrypt]');
+      if (greeting) decryptText(greeting);
+    }, 300);
+
+    // Decrypt section headers on scroll
+    const decryptObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const h2 = entry.target.querySelector('h2');
+          if (h2 && !h2.dataset.decrypted) {
+            h2.dataset.decrypted = 'true';
+            decryptText(h2);
+          }
+          decryptObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.section-header').forEach(el => decryptObserver.observe(el));
+
+    /* ==================== RANDOM GLITCH FLASH ==================== */
+    function randomGlitch() {
+      const hero = document.querySelector('.hero-name');
+      if (hero) {
+        hero.style.textShadow = '3px 0 var(--cyan), -3px 0 var(--coral)';
+        hero.style.transform = `translate(${Math.random() * 4 - 2}px, ${Math.random() * 4 - 2}px)`;
+        setTimeout(() => {
+          hero.style.textShadow = 'none';
+          hero.style.transform = 'translate(0, 0)';
+        }, 80);
+      }
+      setTimeout(randomGlitch, 3000 + Math.random() * 5000);
+    }
+    setTimeout(randomGlitch, 2000);
+
+    /* ==================== 3D TILT CARDS ==================== */
+    document.querySelectorAll('[data-tilt]').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+
+        const tiltX = (y - 0.5) * -10;
+        const tiltY = (x - 0.5) * 10;
+
+        card.style.transform = `perspective(800px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(1.02, 1.02, 1.02)`;
+        card.style.setProperty('--mouse-x', `${x * 100}%`);
+        card.style.setProperty('--mouse-y', `${y * 100}%`);
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+      });
+    });
+
+    /* ==================== SCROLL REVEAL ==================== */
+    const observerOptions = {
+      threshold: 0.15,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, i * 100);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* ==================== PROJECT MODAL DATA ==================== */
+    const projectData = {
+      everest: {
+        label: 'Flagship',
+        title: 'EVEREST ESCAPE',
+        desc: '일산 평점 1등 방탈출 매장. 3시간 장시간 테마로 업계 최고 수준의 몰입형 경험을 제공합니다. 테마 기획부터 장치, 공간 설계까지 100% 자체 제작한 매장입니다.\n\n2023년부터 현재까지 대표 기획 및 제작 총괄로 운영 중이며, 전주점 매장도 기획 완료 후 공사 예정입니다.',
+        images: ['images/img-002.png'],
+        info: [
+          { label: '위치', value: '일산' },
+          { label: '테마 시간', value: '3시간 (장시간)' },
+          { label: '역할', value: '대표 기획/제작 총괄' },
+          { label: '성과', value: '일산 평점 1등' }
+        ],
+        tags: ['방탈출', '장시간 테마', '기획 총괄', '자체 장치 개발', '전주점 확장 예정']
+      },
+      mysterydam: {
+        label: 'Immersive',
+        title: '미스터리담 — 백석담',
+        desc: '이머시브 테마(관객 참여형) 방탈출. 배우와 관객이 호흡하는 시네마틱한 탈출 경험을 만들어냅니다.\n\n2026년 1월 29일 오픈. 배우의 연기와 관객의 참여가 어우러지는 새로운 형태의 방탈출 경험으로, 보다 생동감 넘치는 몰입감을 선사합니다.',
+        images: ['images/img-003.png'],
+        info: [
+          { label: '유형', value: '이머시브 (관객 참여형)' },
+          { label: '오픈', value: '2026.01.29' },
+          { label: '역할', value: '대표 기획/제작 총괄' },
+          { label: '특징', value: '배우 + 관객 호흡' }
+        ],
+        tags: ['이머시브', '관객 참여형', '시네마틱', '백석담', '2026']
+      },
+      naver: {
+        label: 'IP Collaboration',
+        title: 'NAVER 웹툰 OFFLINE',
+        desc: '네이버웹툰 IP를 활용한 오프라인 체험관 프로젝트. 기획 / 시공 / 굿즈제작 / 방탈출 / 체험관까지 전 과정을 총괄했습니다.\n\n강남대로 200PY 규모의 대형 체험관과 방탈출을 제작했으며, 제작 참여도 100%. 2020~2021년 기획 및 제작 총괄을 맡았습니다.',
+        images: ['images/img-006.png', 'images/img-008.png', 'images/img-009.png'],
+        info: [
+          { label: '클라이언트', value: 'NAVER 웹툰' },
+          { label: '규모', value: '강남대로 200PY' },
+          { label: '참여도', value: '100%' },
+          { label: '기간', value: '2020~2021' }
+        ],
+        tags: ['NAVER', 'IP 사업', '체험관', '굿즈제작', '방탈출', '200PY']
+      },
+      carder: {
+        label: 'In Progress',
+        title: 'CARDER — 셜록홈즈',
+        desc: '셜록홈즈 IP를 활용한 방탈출 테마. 자체 개발 장치 \'Carder\'와 결합한 차세대 방탈출 자동화 시스템입니다.\n\n장르: 다크판타지 | 난이도: ★★★☆☆ | 장치비율: 7:3 (장치:자물쇠) | 플레이타임: 65MIN\n\n"클로버의 자격이 있는 자, 운명이 널 기다린다."',
+        images: ['images/img-010.png', 'images/img-011.png'],
+        info: [
+          { label: '장르', value: '다크판타지' },
+          { label: '플레이타임', value: '65분' },
+          { label: '장치비율', value: '7:3 (장치:자물쇠)' },
+          { label: '상태', value: '제작 진행 중' }
+        ],
+        tags: ['Sherlock Holmes', 'Carder', '자동화', 'IoT', '다크판타지']
+      },
+      puzzlebook: {
+        label: 'Publication',
+        title: '정탐정과 미스터리 실종사건',
+        desc: '방탈출의 재미를 책으로 옮긴 퍼즐북. 독자가 직접 단서를 찾고 추리하며 사건을 해결하는 인터랙티브 북입니다.\n\n교보문고 취미분야 주간 베스트셀러 5위를 기록했으며, 현재 2편을 집필 중입니다. 방탈출 제작자의 노하우가 담긴 퍼즐 설계로, 책 한 권이 곧 하나의 방탈출입니다.',
+        images: [],
+        info: [
+          { label: '유형', value: '방탈출 퍼즐북' },
+          { label: '성과', value: '교보문고 주간 5위' },
+          { label: '분야', value: '취미' },
+          { label: '상태', value: '2편 집필 중' }
+        ],
+        tags: ['퍼즐북', '교보문고 TOP 5', '추리', '인터랙티브', '2편 집필중']
+      },
+      keyescape: {
+        label: 'Award Winner',
+        title: '키이스케이프 홍대',
+        desc: '2018년부터 운영한 홍대 키이스케이프 지점. 프랜차이즈 매장으로 업계에 입문하여 2019년 방탈출 올해의 매장, 방탈출어워즈를 수상했습니다.\n\n방탈출 업계의 시작점이자, 현재까지 이어지는 제작 철학의 기반이 된 매장입니다.',
+        images: ['images/img-000.png', 'images/img-001.png'],
+        info: [
+          { label: '위치', value: '홍대' },
+          { label: '운영 시작', value: '2018년' },
+          { label: '수상', value: '2019 올해의 매장' },
+          { label: '유형', value: '프랜차이즈' }
+        ],
+        tags: ['2019 수상', '홍대', '프랜차이즈', '키이스케이프', '방탈출어워즈']
+      }
+    };
+
+    /* ==================== MODAL LOGIC ==================== */
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modal = document.getElementById('modal');
+    const modalClose = document.getElementById('modalClose');
+
+    function openModal(projectKey) {
+      const data = projectData[projectKey];
+      if (!data) return;
+
+      document.getElementById('modalGallery').innerHTML = data.images
+        .map(src => `<img src="${src}" alt="${data.title}">`).join('');
+      document.getElementById('modalLabel').textContent = data.label;
+      document.getElementById('modalTitle').textContent = data.title;
+      document.getElementById('modalDesc').textContent = data.desc;
+      document.getElementById('modalInfo').innerHTML = data.info
+        .map(i => `<div class="modal-info-item"><div class="label">${i.label}</div><div class="value">${i.value}</div></div>`).join('');
+      document.getElementById('modalTags').innerHTML = data.tags
+        .map(t => `<span class="modal-tag">${t}</span>`).join('');
+
+      modalOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      modalOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    modalClose.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    /* ==================== SMOOTH SCROLL ==================== */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
