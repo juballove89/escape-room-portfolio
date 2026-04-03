@@ -107,6 +107,54 @@
       }
     }
 
+    /* ==================== ROBOT CURSOR BUDDY ==================== */
+    .robot-buddy {
+      position: fixed;
+      z-index: 9999;
+      pointer-events: none;
+      transition: transform 0.05s;
+    }
+
+    .robot-buddy svg {
+      width: 48px;
+      height: 48px;
+      filter: drop-shadow(0 0 12px rgba(196, 181, 253, 0.4));
+    }
+
+    .robot-buddy .eye-left,
+    .robot-buddy .eye-right {
+      transition: cx 0.15s, cy 0.15s;
+    }
+
+    .robot-buddy .body-glow {
+      animation: robotGlow 2s ease-in-out infinite;
+    }
+
+    @keyframes robotGlow {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.6; }
+    }
+
+    .robot-emote {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.3s, top 0.3s;
+      pointer-events: none;
+    }
+
+    .robot-emote.show {
+      opacity: 1;
+      top: -26px;
+    }
+
+    @media (max-width: 768px) {
+      .robot-buddy { display: none; }
+    }
+
     /* ==================== GLASS CARD ==================== */
     .glass {
       background: var(--glass);
@@ -625,6 +673,38 @@
 </head>
 <body>
 
+  <!-- Robot Buddy -->
+  <div class="robot-buddy" id="robotBuddy">
+    <div class="robot-emote" id="robotEmote"></div>
+    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <!-- antenna -->
+      <line x1="32" y1="8" x2="32" y2="15" stroke="#fde68a" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="32" cy="6" r="3" fill="#fde68a" class="body-glow"/>
+      <!-- head -->
+      <rect x="16" y="15" width="32" height="26" rx="10" fill="#c4b5fd" opacity="0.9"/>
+      <!-- face plate -->
+      <rect x="20" y="19" width="24" height="18" rx="7" fill="#1a1040" opacity="0.7"/>
+      <!-- eyes -->
+      <circle class="eye-left" cx="27" cy="28" r="3.5" fill="#67e8f9"/>
+      <circle class="eye-right" cx="37" cy="28" r="3.5" fill="#f9a8d4"/>
+      <!-- eye shine -->
+      <circle cx="28.5" cy="26.5" r="1" fill="white" opacity="0.7"/>
+      <circle cx="38.5" cy="26.5" r="1" fill="white" opacity="0.7"/>
+      <!-- mouth -->
+      <path d="M26 33 Q32 37 38 33" stroke="#fde68a" stroke-width="1.5" fill="none" stroke-linecap="round" id="robotMouth"/>
+      <!-- body -->
+      <rect x="22" y="42" width="20" height="12" rx="6" fill="#c4b5fd" opacity="0.7"/>
+      <!-- body light -->
+      <circle cx="32" cy="48" r="2.5" fill="#67e8f9" class="body-glow"/>
+      <!-- arms -->
+      <rect x="12" y="44" width="9" height="4" rx="2" fill="#c4b5fd" opacity="0.6"/>
+      <rect x="43" y="44" width="9" height="4" rx="2" fill="#c4b5fd" opacity="0.6"/>
+      <!-- feet -->
+      <rect x="24" y="54" width="6" height="5" rx="2" fill="#c4b5fd" opacity="0.6"/>
+      <rect x="34" y="54" width="6" height="5" rx="2" fill="#c4b5fd" opacity="0.6"/>
+    </svg>
+  </div>
+
   <!-- Starfield -->
   <canvas id="starfield"></canvas>
 
@@ -914,6 +994,79 @@
       resizeCanvas();
       createParticles();
     });
+
+    /* ==================== ROBOT BUDDY ==================== */
+    const robot = document.getElementById('robotBuddy');
+    const robotEmote = document.getElementById('robotEmote');
+    const eyeL = robot.querySelector('.eye-left');
+    const eyeR = robot.querySelector('.eye-right');
+    const mouth = document.getElementById('robotMouth');
+    let robotX = window.innerWidth / 2;
+    let robotY = window.innerHeight / 2;
+    let targetX = robotX;
+    let targetY = robotY;
+    let lastSpeed = 0;
+    let idleTimer = null;
+
+    const emotes = ['?', '!', '~', '...', '^^'];
+
+    document.addEventListener('mousemove', (e) => {
+      targetX = e.clientX + 25;
+      targetY = e.clientY + 25;
+
+      // eye tracking
+      const rect = robot.getBoundingClientRect();
+      const rcx = rect.left + rect.width / 2;
+      const rcy = rect.top + rect.height / 2;
+      const angle = Math.atan2(e.clientY - rcy, e.clientX - rcx);
+      const eyeDist = 1.8;
+      const elx = 27 + Math.cos(angle) * eyeDist;
+      const ely = 28 + Math.sin(angle) * eyeDist;
+      const erx = 37 + Math.cos(angle) * eyeDist;
+      const ery = 28 + Math.sin(angle) * eyeDist;
+      eyeL.setAttribute('cx', elx);
+      eyeL.setAttribute('cy', ely);
+      eyeR.setAttribute('cx', erx);
+      eyeR.setAttribute('cy', ery);
+
+      // reset idle
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => {
+        showEmote(emotes[Math.floor(Math.random() * emotes.length)]);
+      }, 3000);
+    });
+
+    function showEmote(text) {
+      robotEmote.textContent = text;
+      robotEmote.classList.add('show');
+      setTimeout(() => robotEmote.classList.remove('show'), 1500);
+    }
+
+    // click reaction
+    document.addEventListener('click', () => {
+      showEmote('!');
+      mouth.setAttribute('d', 'M26 32 Q32 39 38 32');
+      setTimeout(() => mouth.setAttribute('d', 'M26 33 Q32 37 38 33'), 400);
+    });
+
+    function animateRobot() {
+      const dx = targetX - robotX;
+      const dy = targetY - robotY;
+      const speed = Math.sqrt(dx * dx + dy * dy);
+
+      robotX += dx * 0.08;
+      robotY += dy * 0.08;
+
+      // tilt based on movement direction
+      const tilt = Math.max(-15, Math.min(15, dx * 0.3));
+
+      robot.style.left = robotX + 'px';
+      robot.style.top = robotY + 'px';
+      robot.style.transform = `rotate(${tilt}deg)`;
+
+      requestAnimationFrame(animateRobot);
+    }
+    animateRobot();
 
     /* ==================== SCROLL REVEAL ==================== */
     const observer = new IntersectionObserver((entries) => {
