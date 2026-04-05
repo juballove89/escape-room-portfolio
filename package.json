@@ -1,0 +1,10 @@
+{
+  "name": "draftly-fullstack-site",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npx serve . -l 3000",
+    "dev:api": "npm --prefix backend run dev",
+    "dev:web": "npx serve frontend -l 3000"
+  }
+}
