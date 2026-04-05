@@ -69,19 +69,7 @@
           hero.style.transform = 'translateY(' + y + 'px) scale(' + scale + ')';
           hero.style.pointerEvents = o < 0.08 ? 'none' : 'auto';
         }
-        var sections = document.querySelectorAll('#pageRoot section');
-        var st = performance.now() * 0.002;
-        sections.forEach(function(s, i){
-          var rect = s.getBoundingClientRect();
-          var vh = innerHeight;
-          var inView = rect.top < vh * 0.85 && rect.bottom > vh * 0.15;
-          var dist = rect.top - vh * 0.5;
-          var parallax = Math.max(-48, Math.min(48, dist * 0.12));
-          var wave = Math.sin(st + i * 0.4) * 3;
-          s.style.transform = 'translateY(' + (parallax + wave) + 'px) translateZ(0)';
-          s.style.opacity = inView ? '1' : '0.55';
-          s.style.transition = 'opacity 0.25s ease';
-        });
+        // Section parallax disabled — using CSS scroll reveal instead
         requestAnimationFrame(animate);
       }
       if(isReady) animate(); else (function wait(){ if(loaded>=TOTAL_FRAMES){ isReady=true; if(loaderEl) loaderEl.style.display='none'; animate(); } else { requestAnimationFrame(wait); } })();
