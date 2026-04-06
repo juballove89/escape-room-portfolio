@@ -4,8 +4,8 @@ body { margin:0; background:#0a0a08; color:var(--cream); overflow-y:auto; overfl
 #bgWrap { position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; opacity:1; transition:opacity 0.15s linear; }
 #bgCanvas { position:absolute; left:0; top:0; width:100%; height:100%; display:block; }
 #postFrameBackdrop {
-  position:fixed; inset:0; z-index:1; pointer-events:none; opacity:0; transition:opacity 0.15s linear;
-  background: linear-gradient(168deg, #0c0c0a 0%, #0a0a08 55%, #0e0e0c 100%);
+  position:fixed; inset:0; z-index:1; pointer-events:none; opacity:0; transition:opacity 0.5s ease;
+  background: #0a0a08;
 }
 .noise-overlay {
   position:fixed; inset:0; z-index:5; pointer-events:none; opacity:0.025;
@@ -25,6 +25,6 @@ body { margin:0; background:#0a0a08; color:var(--cream); overflow-y:auto; overfl
 @keyframes scramble-in { 0%{ opacity:0; letter-spacing:.15em; transform:translateY(14px); } 55%{ opacity:1; letter-spacing:.02em; transform:translateY(0); } 100%{ opacity:1; letter-spacing:0; transform:translateY(0); } }
 .cta { margin-top:8px; display:inline-flex; align-items:center; gap:10px; padding:12px 20px; border-radius:0; border:1px solid rgba(255,255,255,.25); color:#fff; text-decoration:none; font-weight:600; font-size:13px; background:rgba(255,255,255,.08); transition:transform .2s, background .2s; animation:scramble-in 1.25s .12s cubic-bezier(.25,.46,.45,.94) forwards; opacity:0; letter-spacing:0.03em; }
 .cta:hover { transform:scale(1.02); background:rgba(255,255,255,.15); }
-#pageRoot { position:relative; z-index:30; pointer-events:auto; margin-top:100vh; }
+#pageRoot { position:relative; z-index:30; pointer-events:auto; margin-top:0; }
 section { min-height: auto; padding: 0; display: block; border: none; background: transparent; }
 @media (max-width: 900px) { #overlay { padding:14px; } .nav-pill{top:12px;max-width:calc(100vw - 24px);} .links { display:none; } }

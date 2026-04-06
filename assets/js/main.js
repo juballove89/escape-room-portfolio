@@ -16,7 +16,7 @@
         canvas.height = h;
       }
       addEventListener('resize', resize); resize();
-      var FRAME_PHASE = 0.36, FADE_START = FRAME_PHASE + 0.012, FADE_END = FRAME_PHASE + 0.11;
+      var FRAME_PHASE = 0.55, FADE_START = FRAME_PHASE + 0.015, FADE_END = FRAME_PHASE + 0.08;
       function drawFrame(img){
         if(!img||!img.naturalWidth) return;
         var cw=canvas.width, ch=canvas.height;
